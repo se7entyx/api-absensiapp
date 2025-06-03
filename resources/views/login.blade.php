@@ -15,7 +15,7 @@
 </head>
 
 <body>
-    <section class="bg-gray-50 dark:bg-gray-900 h-screen bg-contain bg-center" style="background-image: url('{{ asset('/storage/login-bg.jpg') }}');">
+    <section class="bg-gray-50 dark:bg-gray-900 h-screen bg-contain bg-center" style="background-image: url('{{ asset('login-bg.jpg') }}');">
         @if ($errors->any() || session('error'))
         <div id="alert-border-2" class="flex absolute w-full items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800" role="alert">
             <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -35,7 +35,7 @@
 
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 pt-24 md:pt-0">
             <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-                <img class="w-16 h-16 mr-2" src="{{ asset('storage/logo_ipg1.png') }}" alt="logo">
+                <img class="w-16 h-16 mr-2" src="{{ asset('logo_ipg1.png') }}" alt="logo">
             </a>
             <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
