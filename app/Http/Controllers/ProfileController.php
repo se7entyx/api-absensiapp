@@ -4,38 +4,52 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use App\Models\User;
+use Cloudinary\Api\Admin\AdminApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+    // 
     public function index()
-    {
-        $userr = Auth::user();
-        $id = $userr->id;
-        $user = User::with('department')->find($id);
-        $folderPath = storage_path('app/public/' . $user->image);
-        $photos = [];
-        // dd($folderPath, File::exists($folderPath), File::files($folderPath));
+{
+    $userr = Auth::user();
+    $id = $userr->id;
+    $user = User::with('department')->find($id);
+    $photos = collect();
 
-        if (File::exists($folderPath)) {
-            $photos = collect(File::files($folderPath))
-                ->filter(function ($file) {
-                    return in_array($file->getExtension(), ['jpg', 'jpeg', 'png', 'gif']);
-                })
-                ->map(function ($file) use ($user) {
-                    return $user->image . '/' . $file->getFilename();
-                });
+    if (!empty($user->image)) {
+        try {
+            $api = new AdminApi();
+            $folder = $user->image; // contoh: foto/raf123
+
+            $resources = $api->assets([
+                'type' => 'upload',
+                'prefix' => $folder . '/', // penting: harus pakai slash
+                'max_results' => 100 // bisa ditambah sesuai kebutuhan
+            ]);
+
+            $photos = collect($resources['resources'])->pluck('secure_url');
+        } catch (\Exception $e) {
+            Log::error('Cloudinary fetch error: ' . $e->getMessage());
         }
-        // dd($photos);
-
-        $isProfileIncomplete = empty($user->email) || empty($user->signature) || empty($user->department_id) || empty($user->image);
-        $departments = Department::all();
-        return view('profile', ['title' => "Profile", 'isProfileIncomplete' => $isProfileIncomplete, 'departments' => $departments, 'user' => $user, 'photos' => $photos]);
     }
+
+    $isProfileIncomplete = empty($user->email) || empty($user->signature) || empty($user->department_id) || empty($user->image);
+    $departments = Department::all();
+
+    return view('profile', [
+        'title' => "Profile",
+        'isProfileIncomplete' => $isProfileIncomplete,
+        'departments' => $departments,
+        'user' => $user,
+        'photos' => $photos
+    ]);
+}
     public function changePassword(Request $request)
     {
         $credentials = $request->validate([

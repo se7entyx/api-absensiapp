@@ -139,7 +139,7 @@
 
                                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                                     @foreach($photos as $photo)
-                                    <img src="{{ asset('storage/' . $photo) }}" class="w-full h-auto rounded border">
+                                    <img src="{{ $photo }}" class="w-full h-auto rounded border">
                                     @endforeach
                                 </div>
                             </div>
