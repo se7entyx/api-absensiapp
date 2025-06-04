@@ -20,6 +20,10 @@ class PresensiController extends Controller
     public function export(Request $request)
     {
         $filters = $request->only(['search', 'start_date', 'end_date', 'type', 'kantor_id']);
+        $mode = $request->get('mode', 'rekap');
+        if ($mode === 'my') {
+            $filters['user_id'] = Auth::id(); // hanya presensi milik sendiri
+        }
         return Excel::download(new PresensiExport($filters), 'data-presensi.xlsx');
     }
     public function update(Request $request, $id)
@@ -29,7 +33,7 @@ class PresensiController extends Controller
         ]);
         $presensi = Presensi::findOrFail($id);
         $presensi->status = $validated['status'];
-        if($presensi->image){
+        if ($presensi->image) {
             Storage::delete('public/' . $presensi->image);
             $presensi->image = null;
         }

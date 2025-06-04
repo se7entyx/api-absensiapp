@@ -172,7 +172,7 @@
                             Reset
                         </button>
                     </a>
-                    <a href="{{ route('presensi.export', request()->all()) }}" target="_blank"
+                    <a href="{{ route('presensi.export', array_merge(request()->all(), ['mode' => 'my'])) }}" target="_blank"
                         class="w-full bg-green-600 hover:bg-green-700 text-white text-sm focus:outline-none focus:ring-4  px-4 py-2 rounded-lg">
                         Export Excel
                     </a>
