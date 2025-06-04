@@ -187,6 +187,12 @@ class PresensiController extends Controller
             'dataset_path' => $cloudinaryPath,
         ]);
 
+        Log::info($response->body());
+
+        // return response()->json([
+
+        // ]);
+
         if (!$response->successful()) {
             return response()->json([
                 'success' => false,
