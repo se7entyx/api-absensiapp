@@ -144,3 +144,11 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.getElementById('default-sidebar');
+        if (window.innerWidth < 640) {
+            sidebar.classList.add('-translate-x-full');
+        }
+    });
+</script>
