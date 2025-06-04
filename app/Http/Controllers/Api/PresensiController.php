@@ -182,7 +182,7 @@ class PresensiController extends Controller
         $cloudinaryPath = $user->username;
 
         // Kirim ke Flask API
-        $response = Http::post("https://5319-139-228-86-115.ngrok-free.app/verify", [
+        $response = Http::post("https://bf70-139-228-86-115.ngrok-free.app/verify", [
             'image' => $base64Image,
             'dataset_path' => $cloudinaryPath,
         ]);
