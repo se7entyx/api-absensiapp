@@ -121,7 +121,7 @@
                         alert("Presensi berhasil!");
                         window.location.reload();
                     } else {
-                        // attempts++;
+                        attempts++;
                         if (attempts < 3 && !forceSave) {
                             alert("Wajah tidak cocok. Coba lagi (" + attempts + "/3)");
                             takePhoto(); // Ulangi foto
