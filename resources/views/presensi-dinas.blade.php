@@ -99,11 +99,6 @@
             const latUser = window.currentLat;
             const lngUser = window.currentLng;
 
-            console.log(kantorId);
-            console.log(jenisPresensi);
-            console.log(latUser);
-            console.log(lngUser);
-
             // Kirim ke controller Laravel
             fetch("{{ route('presensi.verifikasi') }}", {
                     method: 'POST',
@@ -117,28 +112,55 @@
                         kantor_id: kantorId,
                         lat: latUser,
                         lng: lngUser,
-                        force_save: forceSave
+                        attempt: attempts + 1 // ⬅️ penting!
                     })
                 })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        console.log(data.output);
                         alert("Presensi berhasil!");
                         window.location.reload();
                     } else {
-                        attempts++;
+                        // attempts++;
                         if (attempts < 3 && !forceSave) {
-                            console.log(data.output);
                             alert("Wajah tidak cocok. Coba lagi (" + attempts + "/3)");
-                            takePhoto(); // coba lagi
+                            takePhoto(); // Ulangi foto
                         } else {
-                            console.log(data.output);
-                            alert("Wajah tidak dikenali. Presensi tetap disimpan dengan status unrecognized.");
-                            takePhoto(true);
+                            alert("Wajah tidak dikenali. Presensi tetap disimpan sebagai gagal.");
+                            forceSave = true;
+
+                            // Kirim ulang dengan force attempt 3
+                            fetch("{{ route('presensi.verifikasi') }}", {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                                    },
+                                    body: JSON.stringify({
+                                        image: imageData,
+                                        jenis: jenisPresensi,
+                                        kantor_id: kantorId,
+                                        lat: latUser,
+                                        lng: lngUser,
+                                        attempt: 3 // ⬅️ Paksa attempt terakhir
+                                    })
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert("Presensi disimpan sebagai gagal.");
+                                        window.location.reload();
+                                    } else {
+                                        alert("Gagal menyimpan presensi.");
+                                    }
+                                    spinner.classList.add('hidden');
+                                })
+                                .catch(error => {
+                                    console.error(error);
+                                    alert("Terjadi kesalahan saat upload foto gagal.");
+                                    spinner.classList.add('hidden');
+                                });
                         }
-                        console.log(data.output);
-                        // alert(data.message);
                     }
                     spinner.classList.add('hidden');
                 })

@@ -61,5 +61,11 @@ class Presensi extends Model
             fn($query, $kantor_id) =>
             $query->where('kantor_id', $kantor_id)
         );
+
+        $query->when(
+            $filters['user_id'] ?? false,
+            fn($query, $user_id) =>
+            $query->where('user_id', $user_id)
+        );
     }
 }
