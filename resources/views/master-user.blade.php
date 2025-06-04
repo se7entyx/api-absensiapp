@@ -2,6 +2,15 @@
     @section('title', 'Master User')
     <x-slot:title>{{$title}}</x-slot:title>
     <section class="bg-gray-100 w-full relative px-4 py-4 sm:px-6">
+        <div id="loadingIndicator" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white p-4 rounded shadow text-center">
+                <svg class="animate-spin h-5 w-5 text-blue-500 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                <p>Loading...</p>
+            </div>
+        </div>
         @if ($errors->any())
         <div id="error-alert" class="relative flex w-full items-center p-4 mb-4 text-red-800 border border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800" role="alert">
             <!-- Progress line (border) at the top -->
@@ -190,7 +199,7 @@
         <div id="createModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div class="bg-white rounded-lg w-full max-w-md p-6 space-y-4">
                 <h2 class="text-xl font-bold">Add User</h2>
-                <form method="post" action="{{route('user.store')}}" enctype="multipart/form-data">
+                <form id="addForm" method="post" action="{{route('user.store')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="space-y-2">
                         <div>
@@ -329,6 +338,12 @@
     </section>
 
     <script>
+        document.getElementById('editForm').addEventListener('submit', function() {
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+        });
+        document.getElementById('addForm').addEventListener('submit', function () {
+    document.getElementById('loadingIndicator').classList.remove('hidden');
+});
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('[data-user-id]').forEach(button => {
                 button.addEventListener('click', function() {
