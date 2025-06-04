@@ -33,6 +33,130 @@ class PresensiController extends Controller
         ]);
     }
 
+    // public function verifyFace(Request $request)
+    // {
+    //     $request->validate([
+    //         'uid' => 'required|string',
+    //         'foto' => 'required|string' // base64
+    //     ]);
+
+    //     $uid = $request->uid;
+    //     $base64Image = $request->foto;
+    //     Log::info('UID: ' . $request->uid);
+    //     Log::info('Foto: ' . substr($request->foto, 0, 100));
+
+    //     // Cari user berdasarkan UID
+    //     $user = User::where('uid', $uid)->first();
+    //     if (!$user) {
+    //         return response()->json(['success' => false, 'message' => 'User tidak ditemukan'], 404);
+    //     }
+
+    //     if (!$user->image || !file_exists(storage_path('app/public/' . $user->image))) {
+    //         return response()->json(['success' => false, 'message' => 'Folder dataset tidak ditemukan'], 404);
+    //     }
+
+    //     // Simpan foto sementara di storage
+    //     $filename = 'face_' . time() . '.jpg';
+    //     $tempPath = storage_path("app/public/tmp/" . $filename);
+
+    //     if (!file_exists(dirname($tempPath))) {
+    //         mkdir(dirname($tempPath), 0755, true);
+    //     }
+
+    //     // $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Image));
+    //     // file_put_contents($tempPath, $imageData);
+    //     $image = str_replace('data:image/png;base64,', '', $base64Image);
+    //     $image = str_replace('data:image/jpeg;base64,', '', $image);
+    //     $image = str_replace(' ', '+', $image);
+    //     file_put_contents($tempPath, base64_decode($image));
+
+    //     // return response()->json([
+    //     //     'success' => true,
+    //     //     'message' => 'Presensi check-out berhasil5',
+    //     // ]);
+
+    //     // Panggil script Python
+    //     $folderWajah = storage_path('app/public/' . $user->image); // contoh: foto/username
+    //     // $cmd = 'python ' . base_path("scripts/face_recognition.py") . ' ' .
+    //     //     escapeshellarg($folderWajah) . ' ' .
+    //     //     escapeshellarg($tempPath);
+    //     // $output = trim(shell_exec($cmd));
+
+    //     $response = Http::post("https://5319-139-228-86-115.ngrok-free.app/verify", [
+    //         'image' => $image,
+    //         'dataset_path' => $user->image,
+    //     ]);
+    //     return response()->json($response->json(), $response->status());
+
+    //     if ($response->successful()) {
+    //         return response()->json($response->json());
+    //     } else {
+    //         return response()->json([
+    //             'error' => 'Gagal menghubungi server verifikasi.',
+    //             'detail' => $response->body()
+    //         ], $response->status());
+    //     }
+    //     // $scriptPath = base_path('scripts/face_recognition.py');
+    //     // $escapedDataset = escapeshellarg($folderWajah);
+    //     // $escapedImage = escapeshellarg($tempPath);
+    //     // $command = "python $scriptPath $escapedDataset $escapedImage";
+    //     // Hapus file foto setelah digunakan
+    //     // unlink($tempPath);
+
+    //     $output = trim(shell_exec($command));
+    //     $lines = explode("\n", trim($output));
+    //     $lastLine = end($lines);
+    //     $recognized = ($lastLine === "true");
+    //     Log::info("Output Python: " . $output);
+    //     if (file_exists($tempPath)) {
+    //         unlink($tempPath);
+    //     }
+    //     // Cek hasil verifikasi
+    //     if (!$recognized) {
+    //         return response()->json(['success' => false, 'message' => 'Verifikasi wajah gagal', 'output' => $output], 403);
+    //     }
+
+    //     // Lanjutkan presensi
+    //     $today = now();
+    //     $presensi = Presensi::where('user_id', $user->id)
+    //         ->whereDate('created_at', $today)
+    //         ->first();
+
+    //     if (!$presensi) {
+    //         $presensi = new Presensi();
+    //         $presensi->user_id = $user->id;
+    //         $presensi->type = 'site';
+    //         // $presensi->check_in = now();
+    //         $presensi->status = $recognized ? 'success' : 'failed';
+    //         $presensi->save();
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Presensi check-in berhasil',
+    //             'presensi' => $presensi,
+    //             'output' => $output
+    //         ]);
+    //     } elseif (!$presensi->check_out) {
+    //         $presensi->check_out = now();
+    //         $presensi->status = $recognized ? 'success' : 'failed';
+    //         $presensi->save();
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Presensi check-out berhasil',
+    //             'presensi' => $presensi,
+    //             'output' => $output
+    //         ]);
+    //     }
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Presensi hari ini sudah lengkap',
+    //         'presensi' => $presensi,
+    //         'output' => $output
+    //     ]);
+    // }
+
     public function verifyFace(Request $request)
     {
         $request->validate([
@@ -42,70 +166,40 @@ class PresensiController extends Controller
 
         $uid = $request->uid;
         $base64Image = $request->foto;
-        Log::info('UID: ' . $request->uid);
-        Log::info('Foto: ' . substr($request->foto, 0, 100));
 
-        // Cari user berdasarkan UID
+        Log::info('UID: ' . $uid);
+        Log::info('Foto: ' . substr($base64Image, 0, 100));
+
         $user = User::where('uid', $uid)->first();
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'User tidak ditemukan'], 404);
         }
 
-        if (!$user->image || !file_exists(storage_path('app/public/' . $user->image))) {
+        if (!$user->image) {
             return response()->json(['success' => false, 'message' => 'Folder dataset tidak ditemukan'], 404);
         }
 
-        // Simpan foto sementara di storage
-        $filename = 'face_' . time() . '.jpg';
-        $tempPath = storage_path("app/public/tmp/" . $filename);
+        $cloudinaryPath = $user->username;
 
-        if (!file_exists(dirname($tempPath))) {
-            mkdir(dirname($tempPath), 0755, true);
-        }
-
-        // $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Image));
-        // file_put_contents($tempPath, $imageData);
-        $image = str_replace('data:image/png;base64,', '', $base64Image);
-        $image = str_replace('data:image/jpeg;base64,', '', $image);
-        $image = str_replace(' ', '+', $image);
-        file_put_contents($tempPath, base64_decode($image));
-
-        // return response()->json([
-        //     'success' => true,
-        //     'message' => 'Presensi check-out berhasil5',
-        // ]);
-
-        // Panggil script Python
-        $folderWajah = storage_path('app/public/' . $user->image); // contoh: foto/username
-        // $cmd = 'python ' . base_path("scripts/face_recognition.py") . ' ' .
-        //     escapeshellarg($folderWajah) . ' ' .
-        //     escapeshellarg($tempPath);
-        // $output = trim(shell_exec($cmd));
-
-        $scriptPath = base_path('scripts/face_recognition.py');
-        $escapedDataset = escapeshellarg($folderWajah);
-        $escapedImage = escapeshellarg($tempPath);
-        $command = "python $scriptPath $escapedDataset $escapedImage";
-        $response = Http::post("http://127.0.0.1:5000/verify", [
-
+        // Kirim ke Flask API
+        $response = Http::post("https://5319-139-228-86-115.ngrok-free.app/verify", [
+            'image' => $base64Image,
+            'dataset_path' => $cloudinaryPath,
         ]);
 
-        return response()->json($response->json(), $response->status());
-
-        // Hapus file foto setelah digunakan
-        // unlink($tempPath);
-
-        $output = trim(shell_exec($command));
-        $lines = explode("\n", trim($output));
-        $lastLine = end($lines);
-        $recognized = ($lastLine === "true");
-        Log::info("Output Python: " . $output);
-        if (file_exists($tempPath)) {
-            unlink($tempPath);
+        if (!$response->successful()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghubungi server verifikasi.',
+                'detail' => $response->body()
+            ], $response->status());
         }
-        // Cek hasil verifikasi
-        if (!$recognized) {
-            return response()->json(['success' => false, 'message' => 'Verifikasi wajah gagal', 'output' => $output], 403);
+
+        $data = $response->json();
+        $isRecognized = $data['result'] ?? false;
+
+        if (!$isRecognized) {
+            return response()->json(['success' => false, 'message' => 'Verifikasi wajah gagal', 'response' => $data], 403);
         }
 
         // Lanjutkan presensi
@@ -118,26 +212,25 @@ class PresensiController extends Controller
             $presensi = new Presensi();
             $presensi->user_id = $user->id;
             $presensi->type = 'site';
-            // $presensi->check_in = now();
-            $presensi->status = $recognized ? 'success' : 'failed';
+            $presensi->status = 'success';
             $presensi->save();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Presensi check-in berhasil',
                 'presensi' => $presensi,
-                'output' => $output
+                'response' => $data
             ]);
         } elseif (!$presensi->check_out) {
             $presensi->check_out = now();
-            $presensi->status = $recognized ? 'success' : 'failed';
+            $presensi->status = 'success';
             $presensi->save();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Presensi check-out berhasil',
                 'presensi' => $presensi,
-                'output' => $output
+                'response' => $data
             ]);
         }
 
@@ -145,9 +238,10 @@ class PresensiController extends Controller
             'success' => true,
             'message' => 'Presensi hari ini sudah lengkap',
             'presensi' => $presensi,
-            'output' => $output
+            'response' => $data
         ]);
     }
+
     public function verifikasi(Request $request)
     {
         $image = $request->input('image');

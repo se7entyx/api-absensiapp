@@ -95,39 +95,10 @@ class ProfileController extends Controller
             $oldFolder = 'foto/' . $oldUsername;
             $newFolder = 'foto/' . $newUsername;
 
-            // Rename folder jika folder lama ada
-            // if (Storage::disk('public')->exists($oldFolder)) {
-            //     Storage::disk('public')->makeDirectory($newFolder); // pastikan folder baru dibuat
-            //     $files = Storage::disk('public')->files($oldFolder);
-
-            //     foreach ($files as $file) {
-            //         $filename = basename($file);
-            //         Storage::disk('public')->move($file, $newFolder . '/' . $filename);
-            //     }
-
-            //     Storage::disk('public')->deleteDirectory($oldFolder); // hapus folder lama
-            // }
-
             // Update path image dan username
-            $user->image = $newFolder;
+            // $user->image = $newFolder;
             $user->username = $newUsername;
         }
-
-        // if ($request->hasFile('foto')) {
-        //     $folderName = 'foto/' . $user->username;
-
-        //     if ($user->image) {
-        //         Storage::disk('public')->deleteDirectory($user->image);
-        //     }
-
-        //     // Save new files
-        //     foreach ($request->file('foto') as $photo) {
-        //         $filename = time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
-        //         $photo->storeAs($folderName, $filename, 'public');
-        //     }
-
-        //     $user->image = $folderName;
-        // }
         if ($request->hasFile('foto')) {
             $folderName = 'foto/' . $user->username;
 
@@ -145,6 +116,7 @@ class ProfileController extends Controller
                             'resource_type' => 'image'
                         ]);
                     }
+                    $adminApi->deleteFolder($oldFolder);
                 } catch (\Exception $e) {
                     Log::error('Cloudinary delete error (foto lama): ' . $e->getMessage());
                 }
@@ -170,16 +142,6 @@ class ProfileController extends Controller
             $user->image = $folderName;
         }
 
-
-        // if ($request->hasFile('ttd')) {
-        //     if ($user->signature) {
-        //         Storage::delete('public/' . $user->signature);
-        //     }
-        //     $signature = $request->file('ttd');
-        //     $signatureName = 'ttd_' . time() . '.' . $signature->getClientOriginalExtension();
-        //     $filePath = $signature->storeAs('ttd', $signatureName, 'public');
-        //     $user->signature = $filePath;
-        // }
         if ($request->hasFile('ttd')) {
             if ($user->signature) {
                 try {
