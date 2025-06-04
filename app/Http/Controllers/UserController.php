@@ -15,7 +15,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('department')->filter(request(['search']))->sortable()->latest()->paginate(5)->withQueryString();
+        $users = User::with('department')->filter(request(['search']))->sortable()->latest()->paginate(15)->withQueryString();
         $departments = Department::all();
         return view('master-user', ['title' => 'Master User', 'users' => $users, 'departments' => $departments]);
     }
@@ -242,16 +242,20 @@ class UserController extends Controller
             }
 
             $signature = $request->file('ttd');
-            $signatureName = 'ttd_' . time() . '_' . uniqid();
+            // $signatureName = 'ttd_' . time() . '_' . uniqid();
+
+            $signatureName = 'ttd_' . time();
+            $folderName = 'ttd';
+            $publicId = date('Y-m-d_His') . '_' . $signatureName;
             try {
-                $cloudinary->uploadApi()->upload(
+                $uploadedFile = $cloudinary->uploadApi()->upload(
                     $signature->getRealPath(),
                     [
-                        'folder' => 'ttd',
-                        'public_id' => $signatureName
+                        'folder' => $folderName,
+                        'public_id' => $publicId
                     ]
                 );
-                $user->signature = 'ttd/' . $signatureName;
+                $user->signature = $uploadedFile['secure_url'];
             } catch (\Exception $e) {
                 Log::error('Cloudinary upload error (ttd): ' . $e->getMessage());
             }
@@ -263,13 +267,44 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
+        $adminApi = new AdminApi();
+        $cloudinary = new Cloudinary([
+            'cloud' => [
+                'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                'api_key'    => env('CLOUDINARY_API_KEY'),
+                'api_secret' => env('CLOUDINARY_API_SECRET'),
+            ],
+            'url' => [
+                'secure' => true
+            ]
+        ]);
 
         if ($user->image) {
-            Storage::disk('public')->deleteDirectory($user->image);
+            try {
+                $adminApi = new AdminApi();
+                $resources = $adminApi->assets([
+                    'type' => 'upload',
+                    'prefix' => $user->image . '/',
+                ]);
+
+                foreach ($resources['resources'] as $resource) {
+                    $cloudinary->uploadApi()->destroy($resource['public_id'], [
+                        'resource_type' => 'image'
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Cloudinary delete error (foto lama): ' . $e->getMessage());
+            }
         }
 
         if ($user->signature) {
-            Storage::delete('public/' . $user->signature);
+            // Storage::delete('public/' . $user->signature);
+            try {
+                $publicId = pathinfo($user->signature, PATHINFO_FILENAME);
+                $cloudinary->uploadApi()->destroy('ttd/' . $publicId);
+            } catch (\Exception $e) {
+                Log::error('Cloudinary delete error (ttd): ' . $e->getMessage());
+            }
         }
 
         $user->delete();

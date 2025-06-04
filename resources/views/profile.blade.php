@@ -150,7 +150,7 @@
                     </div>
                     <div class="mb-4">
                         @if($user->signature)
-                        <img src="{{ asset('storage/' . $user->signature) }}" alt="Signature" class="w-32 h-16 object-contain border ">
+                        <img src="{{ asset($user->signature) }}" alt="Signature" class="w-32 h-16 object-contain border ">
                         @else
                         <p class="text-gray-600">-</p>
                         @endif
