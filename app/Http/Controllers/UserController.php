@@ -57,16 +57,6 @@ class UserController extends Controller
             ]);
 
             if ($request->hasFile('foto')) {
-                // $folderName = 'foto/' . $user->username;
-                // foreach ($request->file('foto') as $photo) {
-                //     $filename = time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
-                //     $photo->storeAs($folderName, $filename, 'public');
-                // }
-                // $user->image = $folderName;
-            }
-
-            // $photos = array();
-            if ($request->hasFile('foto')) {
                 $allowedfileExtension = ['jpg', 'png', 'jpeg'];
                 $files = $request->file('foto');
                 $path = 'foto/' . $user->username; // contoh: foto/raf123
@@ -104,8 +94,6 @@ class UserController extends Controller
                 // $signature = $request->file('ttd');
                 $signatureName = 'ttd_' . time();
                 $folderName = 'ttd';
-                // $file_extension = $request->file('ttd')->getClientOriginalName();
-                // $fileName = pathinfo($file_extension, PATHINFO_FILENAME);
                 $publicId = date('Y-m-d_His') . '_' . $signatureName;
                 try {
                     // Upload gambar baru
@@ -121,10 +109,6 @@ class UserController extends Controller
                     return back()->with('error', 'Gagal upload gambar ke Cloudinary.');
                 }
                 $user->signature = $uploadedFile['secure_url'];
-                // $signature = $request->file('ttd');
-                // $signatureName = 'ttd_' . time() . '.' . $signature->getClientOriginalExtension();
-                // $filePath = $signature->storeAs('ttd', $signatureName, 'public');
-                // $user->signature = $filePath;
             }
             $user->save();
             return back()->with('success', 'Data berhasil ditambahkan.');
@@ -167,25 +151,6 @@ class UserController extends Controller
                 'secure' => true
             ]
         ]);
-
-        // $user->save();
-
-        // if ($request->hasFile('foto')) {
-        //     $folderName = 'foto/' . $user->username;
-
-        //     // Delete existing directory if it exists
-        //     if ($user->image) {
-        //         Storage::disk('public')->deleteDirectory($user->image);
-        //     }
-
-        //     // Save new files
-        //     foreach ($request->file('foto') as $photo) {
-        //         $filename = time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
-        //         $photo->storeAs($folderName, $filename, 'public');
-        //     }
-
-        //     $user->image = $folderName;
-        // }
 
         if ($request->hasFile('foto')) {
             $folderName = 'foto/' . $user->username;
@@ -242,7 +207,6 @@ class UserController extends Controller
             }
 
             $signature = $request->file('ttd');
-            // $signatureName = 'ttd_' . time() . '_' . uniqid();
 
             $signatureName = 'ttd_' . time();
             $folderName = 'ttd';
