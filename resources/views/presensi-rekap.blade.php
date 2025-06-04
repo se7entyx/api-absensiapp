@@ -215,7 +215,7 @@
                             @else
                             <button
                                 class="text-red-500 underline hover:text-red-700"
-                                onclick="showModal('{{ asset('storage/' . $presensi->image) }}')">
+                                onclick="showModal('{{ asset($presensi->image) }}')">
                                 {{ $presensi->status }}
                             </button>
                             @endif
