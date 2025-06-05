@@ -59,24 +59,7 @@ class UserController extends Controller
         $user->role = $validated['role'];
         $user->status = $validated['status'];
         $user->password = Hash::make('password');
-        // Log::info('Validasi berhasil:', $validated);
 
-        // if ($request->hasFile('foto')) {
-        //     $folderName = 'foto/' . $user->username;
-        //     foreach ($request->file('foto') as $photo) {
-        //         $filename = time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
-        //         $photo->storeAs($folderName, $filename, 'public');
-        //     }
-        //     $user->image = $folderName;
-        // }
-
-
-        // if ($request->hasFile('ttd')) {
-        //     $signature = $request->file('ttd');
-        //     $signatureName = 'ttd_' . time() . '.' . $signature->getClientOriginalExtension();
-        //     $filePath = $signature->storeAs('ttd', $signatureName, 'public');
-        //     $user->signature = $filePath;
-        // }
         if ($request->hasFile('foto')) {
             $allowedfileExtension = ['jpg', 'png', 'jpeg'];
             $files = $request->file('foto');
@@ -107,16 +90,12 @@ class UserController extends Controller
                 }
             }
 
-            // Cukup simpan nama folder di database
             $user->image = $path; // hasilnya: foto/raf123
         }
 
         if ($request->hasFile('ttd')) {
-            // $signature = $request->file('ttd');
             $signatureName = 'ttd_' . time();
             $folderName = 'ttd';
-            // $file_extension = $request->file('ttd')->getClientOriginalName();
-            // $fileName = pathinfo($file_extension, PATHINFO_FILENAME);
             $publicId = date('Y-m-d_His') . '_' . $signatureName;
             try {
                 // Upload gambar baru
@@ -132,15 +111,9 @@ class UserController extends Controller
                 return back()->with('error', 'Gagal upload gambar ke Cloudinary.');
             }
             $user->signature = $uploadedFile['secure_url'];
-            // $signature = $request->file('ttd');
-            // $signatureName = 'ttd_' . time() . '.' . $signature->getClientOriginalExtension();
-            // $filePath = $signature->storeAs('ttd', $signatureName, 'public');
-            // $user->signature = $filePath;
         }
 
         $user->save();
-        // User::create($validated);
-
         return response()->json(['message' => 'User created successfully'], 201);
     }
 
@@ -181,35 +154,7 @@ class UserController extends Controller
         $user->email = $validated['email'];
         $user->role = $validated['role'];
         $user->status = $validated['status'];
-        // $user->save();
-
-        // if ($request->hasFile('foto')) {
-        //     $folderName = 'foto/' . $user->username;
-
-        //     // Delete existing directory if it exists
-        //     if ($user->image) {
-        //         Storage::disk('public')->deleteDirectory($user->image);
-        //     }
-
-        //     // Save new files
-        //     foreach ($request->file('foto') as $photo) {
-        //         $filename = time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
-        //         $photo->storeAs($folderName, $filename, 'public');
-        //     }
-
-        //     $user->image = $folderName;
-        // }
-
-
-        // if ($request->hasFile('ttd')) {
-        //     if ($user->signature) {
-        //         Storage::delete('public/' . $user->signature);
-        //     }
-        //     $signature = $request->file('ttd');
-        //     $signatureName = 'ttd_' . time() . '.' . $signature->getClientOriginalExtension();
-        //     $filePath = $signature->storeAs('ttd', $signatureName, 'public');
-        //     $user->signature = $filePath;
-        // }
+        
         if ($request->hasFile('foto')) {
             $folderName = 'foto/' . $user->username;
 
@@ -265,8 +210,6 @@ class UserController extends Controller
             }
 
             $signature = $request->file('ttd');
-            // $signatureName = 'ttd_' . time() . '_' . uniqid();
-
             $signatureName = 'ttd_' . time();
             $folderName = 'ttd';
             $publicId = date('Y-m-d_His') . '_' . $signatureName;

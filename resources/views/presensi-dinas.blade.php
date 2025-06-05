@@ -217,7 +217,7 @@
                         return;
                     }
 
-                    if (distance <= 100) {
+                    if (distance <= 150) {
                         resultDiv.innerHTML = `<span class="text-green-600">Anda berada di sekitar kantor. Silakan lanjut verifikasi wajah.</span>`;
                         document.getElementById('cameraSection').classList.remove('hidden');
                         startCamera();
