@@ -2,7 +2,7 @@
     @section('title', 'Master User')
     <x-slot:title>{{$title}}</x-slot:title>
     <section class="bg-gray-100 w-full relative px-4 py-4 sm:px-6">
-        <div id="loadingIndicator" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div id="loadingIndicator" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-100">
             <div class="bg-white p-4 rounded shadow text-center">
                 <svg class="animate-spin h-5 w-5 text-blue-500 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -341,9 +341,9 @@
         document.getElementById('editForm').addEventListener('submit', function() {
             document.getElementById('loadingIndicator').classList.remove('hidden');
         });
-        document.getElementById('addForm').addEventListener('submit', function () {
-    document.getElementById('loadingIndicator').classList.remove('hidden');
-});
+        document.getElementById('addForm').addEventListener('submit', function() {
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+        });
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('[data-user-id]').forEach(button => {
                 button.addEventListener('click', function() {

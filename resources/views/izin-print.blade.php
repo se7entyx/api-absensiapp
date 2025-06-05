@@ -232,18 +232,18 @@
                     <tr>
                         <td>
                             <div class="">
-                                <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/'.$izin->user->signature))); ?>" >
+                                <img src="{{ $izin->user->signature }}" >
                             </div>
                         </td>
                         <td>
                             <div class="" @if (($izin->status == 'acc1' || $izin->status == 'acc2') && $izin->user->department->leader->signature)>
-                                <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/'.$izin->user->department->leader->signature))); ?>" >
+                                <img src="{{ $izin->user->department->leader->signature }}" >
                                 @endif
                             </div>
                         </td>
                         <td>
                             <div class="" @if ($izin->status == 'acc2' && $izin->approved_hrd)>
-                                <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/'.$izin->hrd->signature))); ?>" >
+                                <img src="{{ $izin->hrd->signature }}" >
                                 @endif
                             </div>
                         </td>

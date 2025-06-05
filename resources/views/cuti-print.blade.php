@@ -213,12 +213,12 @@
                     <tr>
                         <td>
                             <div class="">
-                                <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/'.$cuti->user->signature))); ?>" >
+                                <img src="{{$cuti->user->signature}}" >
                             </div>
                         </td>
                         <td>
                             <div class="" @if ($cuti->status == 'acc1' && $cuti->user->department->leader->signature)>
-                                <img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents(base_path('public/storage/'.$cuti->user->department->leader->signature))); ?>" >
+                                <img src="{{$cuti->user->department->leader->signature}}" >
                                 @endif
                             </div>
                         </td>
