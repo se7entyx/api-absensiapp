@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use App\Models\HariLibur;
 use App\Models\User;
 use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
@@ -136,7 +137,9 @@ class CutiController extends Controller
     {
         $cuti = Cuti::findOrFail($id);
         $html = view('cuti-print', compact('cuti'))->render();
-        $dompdf = new Dompdf();
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $dompdf = new Dompdf($options);
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();

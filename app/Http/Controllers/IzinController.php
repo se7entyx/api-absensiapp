@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\Izin;
 use App\Models\User;
 use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -108,10 +109,13 @@ class IzinController extends Controller
         return redirect()->route('izin.ongoing')->with('success', 'Pengajuan izin rejected.');
     }
 
-    public function print($id){
+    public function print($id)
+    {
         $izin = Izin::findOrFail($id);
         $html = view('izin-print', compact('izin'))->render();
-        $dompdf = new Dompdf();
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $dompdf = new Dompdf($options);
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
@@ -166,8 +170,7 @@ class IzinController extends Controller
                 $query->whereIn('user_id', $userIdsInSameDept)
                     ->orWhere('user_id', $user->id);
             })->latest()->paginate(10);
-
-        }elseif($user->department && $user->department->name == 'HRD'){
+        } elseif ($user->department && $user->department->name == 'HRD') {
             $izins = Izin::latest()->paginate(10);
         } else {
             $izins = Izin::where('user_id', Auth::id())->latest()->paginate(10);
@@ -175,8 +178,9 @@ class IzinController extends Controller
         return view('izin-ongoing', ['title' => 'On Going - Izin', 'izins' => $izins]);
     }
 
-    public function rekap(){
-        $izins = Izin::latest()->filter(request(['search','start_keluar','end_keluar','start_created','end_created']))->sortable()->paginate(10);
+    public function rekap()
+    {
+        $izins = Izin::latest()->filter(request(['search', 'start_keluar', 'end_keluar', 'start_created', 'end_created']))->sortable()->paginate(10);
         return view('izin-rekap', ['title' => 'Rekap Izin', 'izins' => $izins]);
     }
 }
