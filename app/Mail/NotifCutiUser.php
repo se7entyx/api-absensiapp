@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
 
 
-class NotifCutiUser extends Mailable implements ShouldQueue
+class NotifCutiUser extends Mailable
 {
     use Queueable, SerializesModels;
 

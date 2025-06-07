@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
 
 
-class CreateCuti extends Mailable implements ShouldQueue
+class CreateCuti extends Mailable
 {
     use Queueable, SerializesModels;
 
