@@ -2,7 +2,7 @@
     @section('title', 'Approval Surat Cuti')
     <x-slot:title>{{$title}} </x-slot:title>
 
-    <section class="bg-white  lg:w-3/4 sm:w-full px-4 py-6 sm:px-6 mx-auto shadow-lg rounded-lg">
+    <section class="bg-gray-100  lg:w-3/4 sm:w-full px-4 py-6 sm:px-6 mx-auto shadow-lg rounded-lg">
         <!-- Approval Form -->
         <div class="bg-white  p-4 sm:p-6 rounded-lg shadow-md transition-colors duration-300 ease-in-out">
             <h3 class="text-xl sm:text-2xl font-bold text-gray-900  mb-4 sm:mb-6 text-center">Approval Surat Cuti</h3>
