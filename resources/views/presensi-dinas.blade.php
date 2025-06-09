@@ -1,7 +1,7 @@
 <x-layout title="Presensi Dinas">
     @section('title', 'Master User')
     <x-slot:title>{{$title}}</x-slot:title>
-    <section class="p-4">
+    <section class="p-4 bg-gray-100">
         <div id="loadingIndicator" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-100">
             <div class="bg-white p-4 rounded shadow text-center">
                 <svg class="animate-spin h-5 w-5 text-blue-500 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -131,7 +131,7 @@
                         alert("Presensi berhasil!");
                         window.location.reload();
                     } else {
-                        if(data.done){
+                        if (data.done) {
                             alert("Gagal membuat presensi. Presensi sudah lengkap");
                             document.getElementById('loadingIndicator').classList.add('hidden');
                             spinner.classList.add('hidden');
@@ -233,7 +233,7 @@
                     const accuracy = position.coords.accuracy;
                     const distance = getDistance(latKantor, lngKantor, latUser, lngUser);
 
-                    if (accuracy > 150) {
+                    if (accuracy > 50) {
                         resultDiv.innerHTML = `<span class="text-yellow-600">Lokasi tidak akurat (±${Math.round(accuracy)} m). Silakan aktifkan GPS dan coba lagi.</span>`;
                         return;
                     }
