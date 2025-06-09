@@ -75,6 +75,7 @@ class PresensiController extends Controller
     {
         $presensis = Presensi::with('user','kantor')->filter(request(['search', 'start_date', 'end_date', 'type', 'kantor_id']))->sortable()->latest()->paginate(10)->withQueryString();
         $kantors = Kantor::orderBy('name')->get();
+        // die($presensis);
         // dd($presensis->total(), $presensis->count(), $presensis->lastPage());
         return view('presensi-rekap', ['title' => 'Presensi - Rekap', 'presensis' => $presensis, 'kantors' => $kantors]);
     }

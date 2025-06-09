@@ -230,6 +230,9 @@
                 </tbody>
             </table>
         </div>
+        <div class="p-4">
+            {{ $presensis->links() }}
+        </div>
 
         <div id="failedModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
             <div class="bg-white rounded-lg p-6 max-w-md mx-auto relative">
@@ -292,10 +295,9 @@
             </div>
         </div>
 
-        <div class="p-4">
-            {{die($presensis->links())}}
+        <!-- <div class="p-4">
             {{ $presensis->links() }}
-        </div>
+        </div> -->
 
     </section>
 
