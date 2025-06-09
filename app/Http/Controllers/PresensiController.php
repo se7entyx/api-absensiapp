@@ -101,6 +101,20 @@ class PresensiController extends Controller
             return response()->json(['success' => false, 'message' => 'Dataset belum tersedia untuk user ini.'], 404);
         }
 
+        $today = now();
+        $presensi = Presensi::where('user_id', $user->id)
+                ->whereDate('created_at', $today)
+                ->first();
+
+        if($presensi){
+            return response()->json([
+                'success' => false,
+                'message' => 'Presensi sudah dilakukan hari ini',
+                'presensi' => $presensi,
+                'done' => 'true'
+            ]);
+        }
+
         // Coba verifikasi dengan Flask
         $response = Http::post("https://fluent-intensely-foal.ngrok-free.app/verify", [
             'image' => $base64Image,

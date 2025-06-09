@@ -131,6 +131,11 @@
                         alert("Presensi berhasil!");
                         window.location.reload();
                     } else {
+                        if(data.done){
+                            alert("Gagal membuat presensi. Presensi sudah lengkap");
+                            attempts = 0;
+                            return;
+                        }
                         attempts++;
                         if (attempts < 3 && !forceSave) {
                             alert("Wajah tidak cocok. Coba lagi (" + attempts + "/3)");
@@ -174,12 +179,14 @@
                     }
                     spinner.classList.add('hidden');
                     document.getElementById('loadingIndicator').classList.add('hidden');
+                    attempts = 0;
                 })
                 .catch(error => {
                     console.error(error);
                     alert("Terjadi kesalahan saat mengirim foto.");
                     spinner.classList.add('hidden');
                     document.getElementById('loadingIndicator').classList.add('hidden');
+                    attempts = 0;
                 });
         }
 

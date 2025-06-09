@@ -105,7 +105,7 @@ class PresensiController extends Controller
 
             // Simpan presensi failed
             $today = now();
-            $presensi = Presensi::where('user_id', $user->id)
+            $presensi = Presensi::where('user_id', $user->id)->where('type','site')
                 ->whereDate('created_at', $today)
                 ->first();
 
