@@ -67,14 +67,15 @@ class PresensiController extends Controller
     }
     public function my()
     {
-        $presensis = Presensi::with('user')->where('user_id', Auth::id())->filter(request(['start_date', 'end_date', 'type', 'kantor_id']))->sortable()->latest()->paginate(10)->withQueryString();
+        $presensis = Presensi::with('user','kantor')->where('user_id', Auth::id())->filter(request(['start_date', 'end_date', 'type', 'kantor_id']))->sortable()->latest()->paginate(10)->withQueryString();
         $kantors = Kantor::orderBy('name')->get();
         return view('presensi-my', ['title' => 'My Presensi', 'presensis' => $presensis, 'kantors' => $kantors]);
     }
     public function rekap()
     {
-        $presensis = Presensi::with('user')->filter(request(['search', 'start_date', 'end_date', 'type', 'kantor_id']))->sortable()->latest()->paginate(10)->withQueryString();
+        $presensis = Presensi::with('user','kantor')->filter(request(['search', 'start_date', 'end_date', 'type', 'kantor_id']))->sortable()->latest()->paginate(10)->withQueryString();
         $kantors = Kantor::orderBy('name')->get();
+        dd($presensis->total(), $presensis->count(), $presensis->lastPage());
         return view('presensi-rekap', ['title' => 'Presensi - Rekap', 'presensis' => $presensis, 'kantors' => $kantors]);
     }
 
