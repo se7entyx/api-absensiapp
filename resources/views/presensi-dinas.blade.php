@@ -133,6 +133,8 @@
                     } else {
                         if(data.done){
                             alert("Gagal membuat presensi. Presensi sudah lengkap");
+                            document.getElementById('loadingIndicator').classList.add('hidden');
+                            spinner.classList.add('hidden');
                             attempts = 0;
                             return;
                         }
