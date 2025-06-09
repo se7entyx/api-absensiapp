@@ -293,6 +293,7 @@
         </div>
 
         <div class="p-4">
+            {{die($presensis->links())}}
             {{ $presensis->links() }}
         </div>
 
