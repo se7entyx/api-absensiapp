@@ -131,7 +131,7 @@
                         alert("Presensi berhasil!");
                         window.location.reload();
                     } else {
-                        if (data.done) {
+                        if(data.done){
                             alert("Gagal membuat presensi. Presensi sudah lengkap");
                             document.getElementById('loadingIndicator').classList.add('hidden');
                             spinner.classList.add('hidden');
@@ -208,129 +208,69 @@
             const jenisPresensi = document.getElementById('jenisPresensi').value;
             const resultDiv = document.getElementById('result');
 
-            if (!navigator.geolocation) {
-                alert("Geolocation tidak didukung oleh browser ini.");
-                return;
-            }
+            if (jenisPresensi === 'ipg') {
+                const select = document.getElementById('kantor');
+                const selected = select.options[select.selectedIndex];
 
-            const geoOptions = {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            };
+                if (!selected.value) {
+                    alert('Silakan pilih kantor terlebih dahulu.');
+                    return;
+                }
 
-            navigator.geolocation.getCurrentPosition(success, error, geoOptions);
+                const latKantor = parseFloat(selected.dataset.lat);
+                const lngKantor = parseFloat(selected.dataset.lng);
 
-            function success(position) {
-                const latUser = position.coords.latitude;
-                const lngUser = position.coords.longitude;
-                const accuracy = position.coords.accuracy;
+                if (!navigator.geolocation) {
+                    alert("Geolocation tidak didukung oleh browser ini.");
+                    return;
+                }
 
-                window.currentLat = latUser;
-                window.currentLng = lngUser;
-
-                // Jika jenis presensi kantor
-                if (jenisPresensi === 'ipg') {
-                    const select = document.getElementById('kantor');
-                    const selected = select.options[select.selectedIndex];
-
-                    if (!selected.value) {
-                        alert('Silakan pilih kantor terlebih dahulu.');
-                        return;
-                    }
-
-                    const latKantor = parseFloat(selected.dataset.lat);
-                    const lngKantor = parseFloat(selected.dataset.lng);
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const latUser = position.coords.latitude;
+                    const lngUser = position.coords.longitude;
+                    window.currentLat = latUser;
+                    window.currentLng = lngUser;
+                    const accuracy = position.coords.accuracy;
                     const distance = getDistance(latKantor, lngKantor, latUser, lngUser);
 
-                    if (accuracy > 50) {
-                        resultDiv.innerHTML = `<span class="text-yellow-600">Lokasi tidak akurat (±${Math.round(accuracy)} m). Aktifkan GPS dan coba lagi.</span>`;
+                    if (accuracy > 150) {
+                        resultDiv.innerHTML = `<span class="text-yellow-600">Lokasi tidak akurat (±${Math.round(accuracy)} m). Silakan aktifkan GPS dan coba lagi.</span>`;
                         return;
                     }
 
                     if (distance <= 150) {
-                        resultDiv.innerHTML = `<span class="text-green-600">Anda berada di sekitar kantor (${Math.round(distance)} m). Silakan lanjut verifikasi wajah.</span>`;
+                        resultDiv.innerHTML = `<span class="text-green-600">Anda berada di sekitar kantor. Silakan lanjut verifikasi wajah.</span>`;
                         document.getElementById('cameraSection').classList.remove('hidden');
                         startCamera();
                     } else {
                         resultDiv.innerHTML = `<span class="text-red-600">Anda terlalu jauh dari kantor (${Math.round(distance)} m).</span>`;
                     }
+                }, function() {
+                    alert("Gagal mendapatkan lokasi.");
+                });
 
-                } else if (jenisPresensi === 'luar') {
+            } else if (jenisPresensi === 'luar') {
+                // Tidak perlu cek kantor, langsung ambil lokasi dan verifikasi
+                if (!navigator.geolocation) {
+                    alert("Geolocation tidak didukung oleh browser ini.");
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const latUser = position.coords.latitude;
+                    const lngUser = position.coords.longitude;
+                    window.currentLat = position.coords.latitude;
+                    window.currentLng = position.coords.longitude;
                     resultDiv.innerHTML = `<span class="text-green-600">Lokasi didapatkan. Silakan lanjut verifikasi wajah.</span>`;
                     document.getElementById('cameraSection').classList.remove('hidden');
                     startCamera();
-                } else {
-                    alert("Silakan pilih jenis presensi.");
-                }
+                }, function() {
+                    alert("Gagal mendapatkan lokasi.");
+                });
+
+            } else {
+                alert("Silakan pilih jenis presensi.");
             }
-
-            function error(err) {
-                alert(`Gagal mendapatkan lokasi. Kode: ${err.code}, Pesan: ${err.message}`);
-            }
-            // if (jenisPresensi === 'ipg') {
-            //     const select = document.getElementById('kantor');
-            //     const selected = select.options[select.selectedIndex];
-
-            //     if (!selected.value) {
-            //         alert('Silakan pilih kantor terlebih dahulu.');
-            //         return;
-            //     }
-
-            //     const latKantor = parseFloat(selected.dataset.lat);
-            //     const lngKantor = parseFloat(selected.dataset.lng);
-
-            //     if (!navigator.geolocation) {
-            //         alert("Geolocation tidak didukung oleh browser ini.");
-            //         return;
-            //     }
-
-            //     navigator.geolocation.getCurrentPosition(function(position) {
-            //         const latUser = position.coords.latitude;
-            //         const lngUser = position.coords.longitude;
-            //         window.currentLat = latUser;
-            //         window.currentLng = lngUser;
-            //         const accuracy = position.coords.accuracy;
-            //         const distance = getDistance(latKantor, lngKantor, latUser, lngUser);
-
-            //         if (accuracy > 50) {
-            //             resultDiv.innerHTML = `<span class="text-yellow-600">Lokasi tidak akurat (±${Math.round(accuracy)} m). Silakan aktifkan GPS dan coba lagi.</span>`;
-            //             return;
-            //         }
-
-            //         if (distance <= 150) {
-            //             resultDiv.innerHTML = `<span class="text-green-600">Anda berada di sekitar kantor. Silakan lanjut verifikasi wajah.</span>`;
-            //             document.getElementById('cameraSection').classList.remove('hidden');
-            //             startCamera();
-            //         } else {
-            //             resultDiv.innerHTML = `<span class="text-red-600">Anda terlalu jauh dari kantor (${Math.round(distance)} m).</span>`;
-            //         }
-            //     }, function() {
-            //         alert("Gagal mendapatkan lokasi.");
-            //     });
-
-            // } else if (jenisPresensi === 'luar') {
-            //     // Tidak perlu cek kantor, langsung ambil lokasi dan verifikasi
-            //     if (!navigator.geolocation) {
-            //         alert("Geolocation tidak didukung oleh browser ini.");
-            //         return;
-            //     }
-
-            //     navigator.geolocation.getCurrentPosition(function(position) {
-            //         const latUser = position.coords.latitude;
-            //         const lngUser = position.coords.longitude;
-            //         window.currentLat = position.coords.latitude;
-            //         window.currentLng = position.coords.longitude;
-            //         resultDiv.innerHTML = `<span class="text-green-600">Lokasi didapatkan. Silakan lanjut verifikasi wajah.</span>`;
-            //         document.getElementById('cameraSection').classList.remove('hidden');
-            //         startCamera();
-            //     }, function() {
-            //         alert("Gagal mendapatkan lokasi.");
-            //     });
-
-            // } else {
-            //     alert("Silakan pilih jenis presensi.");
-            // }
         }
     </script>
 </x-layout>
