@@ -54,14 +54,13 @@
             <video id="video" autoplay class="w-64 h-48 border rounded"></video>
             <canvas id="canvas" class="hidden"></canvas>
             <br>
-            <button type="button" onclick="takePhoto()" class="mt-2 bg-green-600 text-white px-4 py-2 rounded">Ambil Foto</button>
+            <button type="button" onclick="takePhoto(1)" class="mt-2 bg-green-600 text-white px-4 py-2 rounded">Ambil Foto</button>
         </div>
     </section>
 
     <script>
         let video = null;
-        let attempts = 0;
-
+        // let attempts = 0;
         const btn = document.getElementById('ambilFotoBtn');
         const spinner = document.getElementById('loadingSpinner');
 
@@ -93,7 +92,10 @@
                 });
         }
 
-        function takePhoto(forceSave = false) {
+        // let attempts = 0;
+
+        function takePhoto(attempts) {
+            console.log(attempts);
             document.getElementById('loadingIndicator').classList.remove('hidden');
             const canvas = document.getElementById('canvas');
             const context = canvas.getContext('2d');
@@ -122,25 +124,28 @@
                         kantor_id: kantorId,
                         lat: latUser,
                         lng: lngUser,
-                        attempt: attempts + 1 // ⬅️ penting!
+                        attempt: attempts+1
                     })
                 })
                 .then(res => res.json())
                 .then(data => {
+                    console.log(attempts);
                     if (data.success) {
+                        // attempts = 0;
                         alert("Presensi berhasil!");
                         window.location.reload();
                     } else {
                         if (data.done) {
                             alert("Gagal membuat presensi. Presensi sudah lengkap");
                             resetLoading();
-                            attempts = 0;
+                            // attempts = 0;
                             return;
                         }
-                        attempts++;
-                        if (attempts < 3 && !forceSave) {
+                        // ++attempts;
+                        // attempts = ++attempts;
+                        if (attempts <= 3) {
                             alert("Wajah tidak cocok. Coba lagi (" + attempts + "/3)");
-                            setTimeout(() => takePhoto(), 1000);
+                            setTimeout(() => takePhoto(attempts+1), 1000);
                             
                             // takePhoto();
                             // document.getElementById('loadingIndicator').classList.remove('hidden');
@@ -148,7 +153,6 @@
                             alert("Wajah tidak dikenali. Presensi tetap disimpan sebagai gagal.");
                             forceSave = true;
 
-                            // Kirim ulang dengan force attempt 3
                             fetch("{{ route('presensi.verifikasi') }}", {
                                     method: 'POST',
                                     headers: {
@@ -161,7 +165,7 @@
                                         kantor_id: kantorId,
                                         lat: latUser,
                                         lng: lngUser,
-                                        attempt: 3 // ⬅️ Paksa attempt terakhir
+                                        attempt: 3
                                     })
                                 })
                                 .then(res => res.json())
@@ -182,7 +186,7 @@
                         }
                     }
                     resetLoading();
-                    attempts = 0;
+                    // attempts = 0;
                 })
                 .catch(error => {
                     console.error(error);
