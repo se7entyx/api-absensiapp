@@ -131,18 +131,19 @@
                         alert("Presensi berhasil!");
                         window.location.reload();
                     } else {
-                        if(data.done){
+                        if (data.done) {
                             alert("Gagal membuat presensi. Presensi sudah lengkap");
-                            document.getElementById('loadingIndicator').classList.add('hidden');
-                            spinner.classList.add('hidden');
+                            resetLoading();
                             attempts = 0;
                             return;
                         }
                         attempts++;
                         if (attempts < 3 && !forceSave) {
                             alert("Wajah tidak cocok. Coba lagi (" + attempts + "/3)");
-                            takePhoto(); // Ulangi foto
-                            document.getElementById('loadingIndicator').classList.remove('hidden');
+                            setTimeout(() => takePhoto(), 1000);
+                            
+                            // takePhoto();
+                            // document.getElementById('loadingIndicator').classList.remove('hidden');
                         } else {
                             alert("Wajah tidak dikenali. Presensi tetap disimpan sebagai gagal.");
                             forceSave = true;
@@ -171,26 +172,29 @@
                                     } else {
                                         alert("Gagal menyimpan presensi.");
                                     }
-                                    spinner.classList.add('hidden');
+                                    resetLoading();
                                 })
                                 .catch(error => {
                                     console.error(error);
                                     alert("Terjadi kesalahan saat upload foto gagal.");
-                                    spinner.classList.add('hidden');
+                                    resetLoading();
                                 });
                         }
                     }
-                    spinner.classList.add('hidden');
-                    document.getElementById('loadingIndicator').classList.add('hidden');
+                    resetLoading();
                     attempts = 0;
                 })
                 .catch(error => {
                     console.error(error);
                     alert("Terjadi kesalahan saat mengirim foto.");
-                    spinner.classList.add('hidden');
-                    document.getElementById('loadingIndicator').classList.add('hidden');
+                    resetLoading();
                     attempts = 0;
                 });
+        }
+
+        function resetLoading() {
+            spinner.classList.add('hidden');
+            document.getElementById('loadingIndicator').classList.add('hidden');
         }
 
         function getDistance(lat1, lon1, lat2, lon2) {
