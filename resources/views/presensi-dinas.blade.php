@@ -142,6 +142,7 @@
                         if (attempts < 3 && !forceSave) {
                             alert("Wajah tidak cocok. Coba lagi (" + attempts + "/3)");
                             takePhoto(); // Ulangi foto
+                            document.getElementById('loadingIndicator').classList.remove('hidden');
                         } else {
                             alert("Wajah tidak dikenali. Presensi tetap disimpan sebagai gagal.");
                             forceSave = true;
