@@ -124,7 +124,7 @@
                         kantor_id: kantorId,
                         lat: latUser,
                         lng: lngUser,
-                        attempt: attempts+1
+                        attempt: attempts + 1
                     })
                 })
                 .then(res => res.json())
@@ -144,8 +144,12 @@
                         // ++attempts;
                         // attempts = ++attempts;
                         if (attempts <= 3) {
-                            alert("Wajah tidak cocok. Coba lagi (" + attempts + "/3)");
-                            setTimeout(() => takePhoto(attempts+1), 1000);
+                            if (!confirm("Wajah tidak cocok. Coba lagi (" + attempts + "/3)")) {
+                                // Jika user klik "Cancel"
+                                location.reload();
+                            }else{
+                                setTimeout(() => takePhoto(attempts + 1), 1000);
+                            }
                             
                             // takePhoto();
                             // document.getElementById('loadingIndicator').classList.remove('hidden');
