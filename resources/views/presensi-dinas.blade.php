@@ -27,7 +27,8 @@
                     <option
                         value="{{ $kantor->id }}"
                         data-lat="{{ $kantor->lat }}"
-                        data-lng="{{ $kantor->long }}">
+                        data-lng="{{ $kantor->long }}"
+                        data-rad="{{ $kantor->radius }}">
                         {{ $kantor->name }}
                     </option>
                     @endforeach
@@ -232,6 +233,7 @@
 
                 const latKantor = parseFloat(selected.dataset.lat);
                 const lngKantor = parseFloat(selected.dataset.lng);
+                const radKantor = parseFloat(selected.dataset.rad);
 
                 if (!navigator.geolocation) {
                     alert("Geolocation tidak didukung oleh browser ini.");
@@ -251,7 +253,7 @@
                         return;
                     }
 
-                    if (distance <= 150) {
+                    if (distance <= radKantor) {
                         resultDiv.innerHTML = `<span class="text-green-600">Anda berada di sekitar kantor. Silakan lanjut verifikasi wajah.</span>`;
                         document.getElementById('cameraSection').classList.remove('hidden');
                         startCamera();
