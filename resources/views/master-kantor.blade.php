@@ -141,6 +141,7 @@
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Nama</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Latitude</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Longitude</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Radius</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
@@ -150,8 +151,9 @@
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $kantor->name}}</td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $kantor->lat}}</td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $kantor->long}}</td>
+                        <td class="px-6 py-4 text-sm text-gray-700">{{ $kantor->radius}}</td>
                         <td class="px-6 py-4 text-sm text-gray-700 space-x-2">
-                            <button type="button" id="edit-button" data-modal-target="editModal" data-modal-toggle="editModal" data-user-id="{{ $kantor->id }}" data-user-name="{{ $kantor->name }}" data-user-lat="{{ $kantor->lat }}" data-user-long="{{ $kantor->long }}" class="text-indigo-600 hover:underline">Edit</button>
+                            <button type="button" id="edit-button" data-modal-target="editModal" data-modal-toggle="editModal" data-user-id="{{ $kantor->id }}" data-user-name="{{ $kantor->name }}" data-user-lat="{{ $kantor->lat }}" data-user-long="{{ $kantor->long }}" data-user-rad="{{$kantor->radius}}" class="text-indigo-600 hover:underline">Edit</button>
 
                             <form action="{{ route('kantor.destroy', $kantor->id) }}"
                                 method="POST" class="inline-block"
@@ -187,6 +189,10 @@
                             <label class="block text-sm">Logitude</label>
                             <input type="text" class="w-full border rounded px-3 py-2" name="long">
                         </div>
+                        <div>
+                            <label class="block text-sm">Radius</label>
+                            <input type="text" class="w-full border rounded px-3 py-2" name="radius">
+                        </div>
                     </div>
                     <div class="mt-4 flex justify-end space-x-2">
                         <button type="button" onclick="closeCreateModal()" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
@@ -217,6 +223,10 @@
                             <label class="block text-sm">Logitude</label>
                             <input type="text" id="editLong" class="w-full border rounded px-3 py-2" name="long">
                         </div>
+                        <div>
+                            <label class="block text-sm">Radius</label>
+                            <input type="text" id="editRad" class="w-full border rounded px-3 py-2" name="radius">
+                        </div>
                     </div>
                     <div class="mt-4 flex justify-end space-x-2">
                         <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
@@ -241,6 +251,7 @@
                     const name = this.getAttribute('data-user-name');
                     const lat = this.getAttribute('data-user-lat');
                     const long = this.getAttribute('data-user-long');
+                    const rad = this.getAttribute('data-user-rad');
                     // console.log('User ID:', id);
                     // console.log('Name:', name);
                     // console.log('Username:', username);
@@ -257,6 +268,7 @@
                         document.getElementById('editName').value = name;
                         document.getElementById('editLat').value = lat;
                         document.getElementById('editLong').value = long;
+                        document.getElementById('editRad').value = rad;
                     }
                     const updateModal = document.getElementById('editModal');
                     if (updateModal) {

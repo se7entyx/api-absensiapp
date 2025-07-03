@@ -143,7 +143,7 @@
                         }
                         // ++attempts;
                         // attempts = ++attempts;
-                        if (attempts <= 3) {
+                        if (attempts <= 4) {
                             if (!confirm("Wajah tidak cocok. Coba lagi (" + attempts + "/3)")) {
                                 // Jika user klik "Cancel"
                                 location.reload();

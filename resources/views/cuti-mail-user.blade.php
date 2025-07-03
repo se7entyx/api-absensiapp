@@ -41,7 +41,7 @@
                             <table cellspacing="0" cellpadding="0" style="margin: auto;">
                                 <tr>
                                     <td style="background-color: #345C72; padding: 10px 20px; border-radius: 5px; text-align: center;">
-                                        <a href="http://api-absensiapp.test:8080/cuti/ongoing/" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Lihat Data</a>
+                                        <a href="https://api-absensiapp-production.up.railway.app/cuti/ongoing/" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Lihat Data</a>
                                     </td>
                                 </tr>
                             </table>

@@ -26,7 +26,7 @@
         </div>
         @endif
 
-        <form action="{{ route('cuti.store')}}" method="post" class="xl:px-32">
+        <form id="add" action="{{ route('cuti.store')}}" method="post" class="xl:px-32">
             @csrf
             <div class="grid gap-6 mb-6 md:grid-cols-2">
                 <div>
@@ -111,6 +111,22 @@
             }, 500); // Duration matches the CSS transition
         }
     }, 5000); // 5 seconds delay
+    const form = document.getElementById('add');
+    form.addEventListener('submit', function(event) {
+        const startDate = document.getElementById('start_date').value;
+        const startDate2 = new Date(startDate);
+        const now = new Date();
+
+        // Buat tanggal hari ini tanpa jam, menit, detik
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        // Buat startDate tanpa jam, menit, detik
+        const startOnly = new Date(startDate2.getFullYear(), startDate2.getMonth(), startDate2.getDate());
+
+        if (startOnly.getTime() <= today.getTime()) {
+            event.preventDefault();
+            alert('Minimal ajukan cuti 1 hari dari tanggal hari ini');
+        }
+    });
     async function calculateWorkingDays() {
         const startDate = document.getElementById('start_date').value;
         const endDate = document.getElementById('end_date').value;

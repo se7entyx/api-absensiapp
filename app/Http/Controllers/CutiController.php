@@ -158,6 +158,7 @@ class CutiController extends Controller
     public function approve($id)
     {
         $cuti = Cuti::where('id', $id)->first();
+        dd($cuti->user->email);
         $cuti->status = 'acc1';
         $cuti->save();
         $msg = $cuti;
@@ -185,7 +186,7 @@ class CutiController extends Controller
         $izin->save();
         $msg = $izin;
         $to = $izin->user->email;
-        $subject = "Pengajuan Surat Izin";
+        $subject = "Pengajuan Surat Cuti";
         Mail::to($to)->send(new NotifCutiUser($msg, $subject));
         return redirect()->route('cuti.ongoing')->with('success', 'Pengajuan cuti rejected.');
     }

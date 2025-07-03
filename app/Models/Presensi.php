@@ -15,12 +15,12 @@ class Presensi extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id');
     }
 
     public function kantor()
     {
-        return $this->belongsTo(Kantor::class);
+        return $this->belongsTo(Kantor::class,'kantor_id');
     }
 
     public $sortable = [

@@ -18,12 +18,14 @@ class KantorController extends Controller
             'name' => 'required|string|max:255',
             'lat' => 'nullable|numeric',
             'long' => 'nullable|numeric',
+            'radius' => 'required|numeric'
         ]);
 
         $kantor = new Kantor();
         $kantor->name = $validated['name'];
         $kantor->lat = $validated['lat'];
         $kantor->long = $validated['long'];
+        $kantor->radius = $validated['radius'];
         $kantor->save();
 
         return redirect()->back()->with('success', 'Kantor berhasil ditambahkan.');
@@ -36,12 +38,14 @@ class KantorController extends Controller
             'name' => 'required|string|max:255',
             'lat' => 'nullable|numeric',
             'long' => 'nullable|numeric',
+            'radius' => 'required|numeric'
         ]);
 
         // $kantor = new Kantor();
         $kantor->name = $validated['name'];
         $kantor->lat = $validated['lat'];
         $kantor->long = $validated['long'];
+        $kantor->radius = $validated['radius'];
         $kantor->save();
 
         return redirect()->back()->with('success', 'Kantor berhasil diedit.');

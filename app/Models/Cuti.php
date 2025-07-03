@@ -21,7 +21,7 @@ class Cuti extends Model
     ];
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id');
     }
     public function scopeFilter(Builder $query, array $filters): void
     {

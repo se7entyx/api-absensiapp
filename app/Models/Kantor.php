@@ -10,7 +10,7 @@ class Kantor extends Model
 {
     use Sortable;
     protected $table = 'kantor';
-    protected $fillable = ['name', 'lat', 'long'];
+    protected $fillable = ['name', 'lat', 'long','radius'];
 
     public function scopeFilter(Builder $query, array $filters): void
     {
