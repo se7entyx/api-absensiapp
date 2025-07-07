@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\PresensiExport;
+use App\Exports\PresensiMultiSheetExport;
 use App\Models\Kantor;
 use App\Models\Presensi;
 use App\Models\User;
@@ -29,7 +30,8 @@ class PresensiController extends Controller
         if ($mode === 'my') {
             $filters['user_id'] = Auth::id(); // hanya presensi milik sendiri
         }
-        return Excel::download(new PresensiExport($filters), 'data-presensi.xlsx');
+        // dd($filters);
+        return Excel::download(new PresensiMultiSheetExport($filters), 'data-presensi.xlsx');
     }
     public function update(Request $request, $id)
     {
@@ -67,13 +69,13 @@ class PresensiController extends Controller
     }
     public function my()
     {
-        $presensis = Presensi::with('user','kantor')->where('user_id', Auth::id())->filter(request(['start_date', 'end_date', 'type', 'kantor_id']))->sortable()->latest()->paginate(10)->withQueryString();
+        $presensis = Presensi::with('user', 'kantor')->where('user_id', Auth::id())->filter(request(['start_date', 'end_date', 'type', 'kantor_id']))->sortable()->latest()->paginate(10)->withQueryString();
         $kantors = Kantor::orderBy('name')->get();
         return view('presensi-my', ['title' => 'My Presensi', 'presensis' => $presensis, 'kantors' => $kantors]);
     }
     public function rekap()
     {
-        $presensis = Presensi::with('user','kantor')->filter(request(['search', 'start_date', 'end_date', 'type', 'kantor_id']))->sortable()->latest()->paginate(10)->withQueryString();
+        $presensis = Presensi::with('user', 'kantor')->filter(request(['search', 'start_date', 'end_date', 'type', 'kantor_id']))->sortable()->latest()->paginate(10)->withQueryString();
         $kantors = Kantor::orderBy('name')->get();
         // die($presensis);
         // dd($presensis->total(), $presensis->count(), $presensis->lastPage());
@@ -105,10 +107,10 @@ class PresensiController extends Controller
 
         $today = now();
         $presensi = Presensi::where('user_id', $user->id)
-                ->whereDate('created_at', $today)
-                ->first();
+            ->whereDate('created_at', $today)
+            ->first();
 
-        if($presensi){
+        if ($presensi->check_out) {
             return response()->json([
                 'success' => false,
                 'message' => 'Presensi sudah dilakukan hari ini',
@@ -134,25 +136,50 @@ class PresensiController extends Controller
         $result = $response->json()['result'] ?? false;
 
         if ($result === true) {
-            // Presensi success
             $today = now();
-            $presensi = Presensi::firstOrNew([
-                'user_id' => $user->id,
-                'created_at' => $today->toDateString()
-            ]);
 
-            $presensi->type = 'dinas-' . $request->jenis;
-            $presensi->status = 'success';
-            $presensi->kantor_id = $request->kantor_id;
-            $presensi->lat = $request->lat;
-            $presensi->long = $request->lng;
-            $presensi->save();
+            $presensi = Presensi::where('user_id', $user->id)
+                ->whereDate('created_at', $today)
+                ->first();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Presensi berhasil',
-                'presensi' => $presensi
-            ]);
+            if ($presensi) {
+                if (is_null($presensi->check_out)) {
+                    // Jika sudah check-in tapi belum check-out → isi check-out
+                    $presensi->check_out = now();
+                    $presensi->save();
+
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Presensi check-out berhasil',
+                        'presensi' => $presensi,
+                    ]);
+                } else {
+                    // Sudah check-in dan check-out → tidak perlu presensi lagi
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Presensi hari ini sudah lengkap',
+                        'presensi' => $presensi,
+                        'done' => true
+                    ]);
+                }
+            } else {
+                // Presensi baru (check-in)
+                $presensi = new Presensi();
+                $presensi->user_id = $user->id;
+                $presensi->type = 'dinas-' . $request->jenis;
+                $presensi->status = 'success';
+                $presensi->kantor_id = $request->kantor_id;
+                $presensi->lat = $request->lat;
+                $presensi->long = $request->lng;
+                $presensi->created_at = now(); // Check-in waktu sekarang
+                $presensi->save();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Presensi Check In berhasil',
+                    'presensi' => $presensi
+                ]);
+            }
         }
 
         // Gagal 3 kali
@@ -191,23 +218,55 @@ class PresensiController extends Controller
             }
 
             // Simpan presensi failed
-            $presensi = Presensi::firstOrNew([
-                'user_id' => $user->id,
-                'created_at' => now()->toDateString()
-            ]);
-            $presensi->type = 'dinas-' . $request->jenis;
-            $presensi->status = 'failed';
-            $presensi->image = $imageUrl;
-            $presensi->kantor_id = $request->kantor_id;
-            $presensi->lat = $request->lat;
-            $presensi->long = $request->lng;
-            $presensi->save();
+            $today = now();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Wajah gagal diverifikasi setelah 3x. Presensi disimpan sebagai gagal.',
-                'presensi' => $presensi
-            ]);
+            $presensi = Presensi::where('user_id', $user->id)
+                ->whereDate('created_at', $today)
+                ->first();
+
+            if ($presensi) {
+                if (is_null($presensi->check_out)) {
+                    // Jika sudah check-in tapi belum check-out → isi check-out
+                    $presensi->check_out = now();
+                    $presensi->type = 'dinas-' . $request->jenis;
+                    $presensi->status = 'failed';
+                    $presensi->kantor_id = $request->kantor_id;
+                    $presensi->lat = $request->lat;
+                    $presensi->long = $request->lng;
+                    $presensi->save();
+
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Presensi check-out berhasil',
+                        'presensi' => $presensi,
+                    ]);
+                } else {
+                    // Sudah check-in dan check-out → tidak perlu presensi lagi
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Presensi hari ini sudah lengkap',
+                        'presensi' => $presensi,
+                        'done' => true
+                    ]);
+                }
+            } else {
+                // Presensi baru (check-in)
+                $presensi = new Presensi();
+                $presensi->user_id = $user->id;
+                $presensi->type = 'dinas-' . $request->jenis;
+                $presensi->status = 'failed';
+                $presensi->kantor_id = $request->kantor_id;
+                $presensi->lat = $request->lat;
+                $presensi->long = $request->lng;
+                $presensi->created_at = now(); // Check-in waktu sekarang
+                $presensi->save();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Presensi Check In berhasil',
+                    'presensi' => $presensi
+                ]);
+            }
         }
 
         // Belum 3x gagal

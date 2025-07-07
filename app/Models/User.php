@@ -12,7 +12,7 @@ use Kyslik\ColumnSortable\Sortable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable,HasApiTokens,Sortable;
+    use HasFactory, Notifiable, HasApiTokens, Sortable;
 
     /**
      * The attributes that are mass assignable.
@@ -28,6 +28,10 @@ class User extends Authenticatable
     public function leaderDepartment()
     {
         return $this->hasMany(Department::class, 'pemimpin_id');
+    }
+    public function presensi()
+    {
+        return $this->hasMany(Presensi::class);
     }
 
     /**
