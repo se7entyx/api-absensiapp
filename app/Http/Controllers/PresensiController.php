@@ -110,13 +110,15 @@ class PresensiController extends Controller
             ->whereDate('created_at', $today)
             ->first();
 
-        if ($presensi->check_out) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Presensi sudah dilakukan hari ini',
-                'presensi' => $presensi,
-                'done' => 'true'
-            ]);
+        if ($presensi) {
+            if ($presensi->check_out) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Presensi sudah dilakukan hari ini',
+                    'presensi' => $presensi,
+                    'done' => 'true'
+                ]);
+            }
         }
 
         // Coba verifikasi dengan Flask

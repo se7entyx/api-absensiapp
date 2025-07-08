@@ -49,6 +49,7 @@ class JamKerjaExport implements FromView, WithTitle, WithColumnWidths
             'B' => 15, // NIP
             'C' => 20, // Department
             'D' => 20, // Check In
+            'E' => 20, // Check In
         ];
     }
 }
