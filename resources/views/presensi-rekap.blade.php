@@ -191,8 +191,7 @@
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Lokasi</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">@sortablelink('created_at','Check In')</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Check Out</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Latitude</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Longitude</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Lokasi User</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">@sortablelink('status','Status')</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Action</th>
                     </tr>
@@ -207,8 +206,11 @@
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $presensi->kantor->name ?? '-'}}</td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $presensi->created_at->format('d M Y, H:m') ?? '-'}}</td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $presensi->check_out ? \Carbon\Carbon::parse($presensi->check_out)->format('d M Y, H:i') : '-'}}</td>
-                        <td class="px-6 py-4 text-sm text-gray-700">{{ $presensi->lat ?? '-'}}</td>
-                        <td class="px-6 py-4 text-sm text-gray-700">{{ $presensi->long ?? '-'}}</td>
+                        <td class="px-6 py-4 text-sm text-gray-700">
+                            @if (in_array($presensi->type, ['dinas-ipg', 'dinas-luar']))
+                            <a href="https://maps.google.com/?q={{$presensi->lat ?? ''}},{{$presensi->long ?? ''}}">Cek</a>
+                            @endif 
+                        </td>
                         <td class="px-6 py-4 text-sm text-gray-700">
                             @if ($presensi->status == 'success')
                             <p class="text-green-500"> {{$presensi->status}} </p>
