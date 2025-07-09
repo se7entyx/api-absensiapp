@@ -215,7 +215,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                 </svg>
-                            </a> 
+                            </a>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">
@@ -231,7 +231,19 @@
                         </td>
                         <td class="flex justify-center items-center py-2">
                             @if($presensi->status === 'failed')
-                            <button type="button" id="edit-button" data-modal-target="editModal" data-modal-toggle="editModal" data-user-id="{{ $presensi->id }}" data-user-status="{{ $presensi->status }}" class="text-indigo-600 hover:underline">Edit</button>
+                            <button type="button"
+                                id="edit-button"
+                                data-modal-target="editModal"
+                                data-modal-toggle="editModal"
+                                data-user-id="{{ $presensi->id }}"
+                                data-user-status="{{ $presensi->status }}"
+                                class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition-colors duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M11 4h2M6 20h12M4 20a1 1 0 01-1-1V5a1 1 0 011-1h6.586a1 1 0 01.707.293l6.414 6.414a1 1 0 01.293.707V19a1 1 0 01-1 1H4z" />
+                                </svg>
+                                Edit
+                            </button>
                             @endif
                         </td>
                     </tr>
