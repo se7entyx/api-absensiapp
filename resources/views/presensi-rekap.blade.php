@@ -208,8 +208,15 @@
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $presensi->check_out ? \Carbon\Carbon::parse($presensi->check_out)->format('d M Y, H:i') : '-'}}</td>
                         <td class="px-6 py-4 text-sm text-gray-700">
                             @if (in_array($presensi->type, ['dinas-ipg', 'dinas-luar']))
-                            <a href="https://maps.google.com/?q={{$presensi->lat ?? ''}},{{$presensi->long ?? ''}}">Cek</a>
-                            @endif 
+                            <a href="https://maps.google.com/?q={{ $presensi->lat ?? '' }},{{ $presensi->long ?? '' }}"
+                                target="_blank"
+                                class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow transition-all duration-200">
+                                Cek Lokasi
+                                <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </a> 
+                            @endif
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">
                             @if ($presensi->status == 'success')
